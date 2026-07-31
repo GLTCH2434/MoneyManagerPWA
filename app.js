@@ -204,6 +204,64 @@ function render() {
 
 }
 
+function showMonthDialog(){
+
+    const select=document.getElementById("reportMonth");
+
+    select.innerHTML="";
+
+    const months=new Set();
+
+    tx.forEach(t=>{
+
+        const d=new Date(t.date);
+
+        months.add(
+
+            d.toLocaleString("en-US",{
+
+                month:"long",
+
+                year:"numeric"
+
+            })
+
+        );
+
+    });
+
+    [...months].sort().forEach(m=>{
+
+        select.innerHTML+=`<option>${m}</option>`;
+
+    });
+
+    document
+    .getElementById("monthDialog")
+    .classList.add("show");
+
+}
+
+function closeMonthDialog(){
+
+    document
+    .getElementById("monthDialog")
+    .classList.remove("show");
+
+}
+
+function generateMonthlyPDF(){
+
+    const month=document
+    .getElementById("reportMonth")
+    .value;
+
+    exportPDF(month);
+
+    closeMonthDialog();
+
+}
+
 async function exportPDF(){
 
     const { jsPDF } = window.jspdf;
