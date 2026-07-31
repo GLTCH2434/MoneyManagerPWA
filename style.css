@@ -1,3 +1,183 @@
-body{font-family:Arial;background:#111;color:#fff;max-width:700px;margin:auto;padding:20px}
-.card{background:#222;padding:15px;border-radius:12px;margin:15px 0}
-input,select,button{width:100%;padding:10px;margin:6px 0;border-radius:8px}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root{
+    --bg:#0f172a;
+    --card:rgba(255,255,255,.08);
+    --cardBorder:rgba(255,255,255,.12);
+    --text:#ffffff;
+    --sub:#b6bfd2;
+    --green:#22c55e;
+    --red:#ef4444;
+    --blue:#3b82f6;
+    --accent:#8b5cf6;
+    --radius:22px;
+    --shadow:0 20px 40px rgba(0,0,0,.35);
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Inter',sans-serif;
+}
+
+body{
+    min-height:100vh;
+    padding:22px;
+    color:var(--text);
+    background:
+    radial-gradient(circle at top left,#4f46e5 0%,transparent 35%),
+    radial-gradient(circle at top right,#0ea5e9 0%,transparent 30%),
+    radial-gradient(circle at bottom,#111827 20%,#020617 100%);
+}
+
+h1{
+    text-align:center;
+    font-size:2rem;
+    margin-bottom:25px;
+    font-weight:700;
+    letter-spacing:.5px;
+}
+
+.card{
+    background:var(--card);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+    border:1px solid var(--cardBorder);
+    border-radius:var(--radius);
+    padding:22px;
+    margin-bottom:20px;
+    box-shadow:var(--shadow);
+    animation:fade .4s ease;
+}
+
+@keyframes fade{
+from{
+opacity:0;
+transform:translateY(20px);
+}
+to{
+opacity:1;
+transform:none;
+}
+}
+
+#bal{
+    font-size:2.3rem;
+    margin-bottom:15px;
+}
+
+#inc{
+    color:var(--green);
+    font-size:1.05rem;
+    margin-bottom:6px;
+}
+
+#exp{
+    color:var(--red);
+    font-size:1.05rem;
+}
+
+input,
+select{
+    width:100%;
+    padding:15px;
+    border:none;
+    outline:none;
+    border-radius:15px;
+    background:rgba(255,255,255,.08);
+    color:white;
+    margin:10px 0;
+    font-size:15px;
+    transition:.25s;
+}
+
+input::placeholder{
+    color:#cbd5e1;
+}
+
+input:focus,
+select:focus{
+    background:rgba(255,255,255,.13);
+    transform:scale(1.02);
+}
+
+button{
+    width:100%;
+    border:none;
+    border-radius:16px;
+    padding:15px;
+    margin-top:12px;
+    cursor:pointer;
+    font-size:15px;
+    font-weight:600;
+    color:white;
+    background:linear-gradient(135deg,#3b82f6,#8b5cf6);
+    transition:.25s;
+}
+
+button:hover{
+    transform:translateY(-2px);
+    box-shadow:0 10px 25px rgba(59,130,246,.35);
+}
+
+button:active{
+    transform:scale(.97);
+}
+
+ul{
+    list-style:none;
+    margin-top:15px;
+}
+
+li{
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:16px;
+    padding:16px;
+    margin-bottom:12px;
+    transition:.25s;
+    word-break:break-word;
+}
+
+li:hover{
+    transform:translateY(-2px);
+    background:rgba(255,255,255,.09);
+}
+
+::-webkit-scrollbar{
+    width:8px;
+}
+
+::-webkit-scrollbar-thumb{
+    background:#475569;
+    border-radius:10px;
+}
+
+::-webkit-scrollbar-track{
+    background:transparent;
+}
+
+@media(max-width:600px){
+
+body{
+padding:16px;
+}
+
+h1{
+font-size:1.7rem;
+}
+
+#bal{
+font-size:2rem;
+}
+
+.card{
+padding:18px;
+}
+
+button{
+padding:14px;
+}
+
+}
