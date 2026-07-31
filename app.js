@@ -204,73 +204,100 @@ function render() {
 
 }
 
-async function exportPDF() {
+async function exportPDF(){
 
     const { jsPDF } = window.jspdf;
 
     const pdf = new jsPDF();
 
-    let income = 0;
-    let expense = 0;
+    let income=0;
+    let expense=0;
 
-    tx.forEach(t => {
-
-        if (t.type == "Income")
-            income += t.amount;
+    tx.forEach(t=>{
+        if(t.type==="Income")
+            income+=t.amount;
         else
-            expense += t.amount;
-
+            expense+=t.amount;
     });
 
-    pdf.setFontSize(20);
+    const balance=income-expense;
 
-    pdf.text("Money Manager", 20, 20);
+    pdf.setFillColor(41,98,255);
+    pdf.rect(0,0,210,35,"F");
+
+    pdf.setTextColor(255);
+    pdf.setFontSize(24);
+    pdf.setFont("helvetica","bold");
+    pdf.text("Money Manager",15,18);
+
+    pdf.setFontSize(11);
+    pdf.text("Monthly Financial Report",15,28);
+
+    pdf.setTextColor(0);
+
+    pdf.setFontSize(18);
+    pdf.text("Summary",15,48);
 
     pdf.setFontSize(12);
 
-    pdf.text("Monthly Summary", 20, 35);
+    pdf.text("Income",20,60);
+    pdf.text("Rs. "+income.toLocaleString("en-IN"),90,60);
 
-    pdf.text("Income : " + money(income), 20, 50);
+    pdf.text("Expense",20,70);
+    pdf.text("Rs. "+expense.toLocaleString("en-IN"),90,70);
 
-    pdf.text("Expense : " + money(expense), 20, 60);
+    pdf.text("Balance",20,80);
+    pdf.text("Rs. "+balance.toLocaleString("en-IN"),90,80);
 
-    pdf.text("Balance : " + money(income-expense), 20, 70);
+    pdf.autoTable({
 
-    let y = 90;
+        startY:95,
 
-    pdf.setFontSize(16);
+        head:[[
+            "Date",
+            "Category",
+            "Type",
+            "Amount",
+            "Note"
+        ]],
 
-    pdf.text("Transactions",20,y);
+        body:tx.map(t=>[
+            t.date,
+            t.category.replace(/[^\x00-\x7F]/g,""),
+            t.type,
+            "Rs. "+t.amount.toLocaleString("en-IN"),
+            t.note||"-"
+        ]),
 
-    y += 15;
+        headStyles:{
+            fillColor:[41,98,255]
+        },
 
-    pdf.setFontSize(10);
+        alternateRowStyles:{
+            fillColor:[245,245,245]
+        },
 
-    tx.forEach(t=>{
-
-        if(y>280){
-
-            pdf.addPage();
-
-            y=20;
-
+        styles:{
+            fontSize:10
         }
-
-        pdf.text(
-
-`${t.date} | ${t.category} | ${t.type} | ${money(t.amount)} | ${t.note}`,
-
-20,
-
-y
-
-);
-
-        y += 8;
 
     });
 
-    pdf.save("Money_Manager_Report.pdf");
+    pdf.setFontSize(10);
+
+    pdf.setTextColor(120);
+
+    pdf.text(
+
+        "Generated on "+new Date().toLocaleString(),
+
+        15,
+
+        pdf.lastAutoTable.finalY+15
+
+    );
+
+    pdf.save("MoneyManagerReport.pdf");
 
     showToast("PDF Exported");
 
