@@ -13,6 +13,34 @@ const toast = document.getElementById("toast");
 let tx = JSON.parse(localStorage.getItem("tx")) || [];
 let selectedDate = new Date();
 
+function updateMonthTitle(){
+
+    document.getElementById("currentMonth").innerText=
+
+    selectedDate.toLocaleString("en-US",{
+
+        month:"long",
+
+        year:"numeric"
+
+    });
+
+}
+
+function changeMonth(direction){
+
+    selectedDate.setMonth(
+
+        selectedDate.getMonth()+direction
+
+    );
+
+    updateMonthTitle();
+
+    render();
+
+}
+
 function save() {
     localStorage.setItem("tx", JSON.stringify(tx));
     render();
