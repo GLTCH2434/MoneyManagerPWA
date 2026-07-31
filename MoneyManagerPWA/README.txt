@@ -1,1 +1,0 @@
-Open index.html using a local web server (or GitHub Pages/Netlify). Install from browser menu -> Add to Home Screen.

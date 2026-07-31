@@ -1,7 +1,0 @@
-let tx=JSON.parse(localStorage.getItem('tx')||'[]');
-function save(){localStorage.setItem('tx',JSON.stringify(tx));render();}
-function addTx(){let a=+amt.value;if(!a)return;tx.unshift({amt:a,type:type.value,cat:cat.value,note:note.value,date:new Date().toLocaleDateString()});amt.value='';note.value='';save();}
-function render(){let inc=0,exp=0;list.innerHTML='';tx.forEach((t,i)=>{if(t.type==='Income')inc+=t.amt;else exp+=t.amt;let li=document.createElement('li');li.textContent=`${t.date} | ${t.cat} | ${t.type} | ₹${t.amt} ${t.note}`;list.appendChild(li);});bal.textContent='Balance ₹'+(inc-exp);incEl=document.getElementById('inc');expEl=document.getElementById('exp');incEl.textContent='Income ₹'+inc;expEl.textContent='Expense ₹'+exp;}
-async function exportPDF(){const {jsPDF}=window.jspdf;let d=new jsPDF();let inc=0,exp=0;tx.forEach(t=>t.type==='Income'?inc+=t.amt:exp+=t.amt);d.text('Money Manager Monthly Report',10,10);d.text('Income: ₹'+inc,10,20);d.text('Expense: ₹'+exp,10,30);d.text('Balance: ₹'+(inc-exp),10,40);let y=55;tx.forEach(t=>{if(y>280){d.addPage();y=10;}d.text(`${t.date} | ${t.cat} | ${t.type} | ₹${t.amt} | ${t.note}`,10,y);y+=8;});d.save('Monthly_Report.pdf');}
-if('serviceWorker'in navigator){navigator.serviceWorker.register('sw.js');}
-render();
