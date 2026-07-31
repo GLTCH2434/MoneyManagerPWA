@@ -81,6 +81,30 @@ function deleteTx(id) {
 
 }
 
+function openModal(){
+
+document.getElementById("modal").classList.add("show");
+
+document.getElementById("overlay").classList.add("show");
+
+}
+
+function closeModal(){
+
+document.getElementById("modal").classList.remove("show");
+
+document.getElementById("overlay").classList.remove("show");
+
+}
+
+function saveTransaction(){
+
+addTx();
+
+closeModal();
+
+}
+
 function render() {
 
     list.innerHTML = "";
