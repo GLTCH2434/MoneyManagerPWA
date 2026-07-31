@@ -121,55 +121,72 @@ function render() {
 
         let li = document.createElement("li");
 
-        li.innerHTML = `
+       li.innerHTML = `
 
-<div style="display:flex;justify-content:space-between;align-items:center;gap:15px;">
+<div class="txCard">
 
-<div>
+    <div class="txLeft">
 
-<div style="font-size:18px;font-weight:600;">
-${t.category}
-</div>
+        <div class="txIcon">
 
-<div style="font-size:13px;color:#b6bfd2;margin-top:4px;">
-${t.note || "No notes"}
-</div>
+            ${
+                t.category.includes("Food") ? "🍔" :
+                t.category.includes("Transport") ? "🚗" :
+                t.category.includes("Shopping") ? "🛍️" :
+                t.category.includes("Bills") ? "💡" :
+                t.category.includes("Entertainment") ? "🎬" :
+                t.category.includes("Salary") ? "💼" :
+                t.category.includes("Medical") ? "🏥" :
+                t.category.includes("Travel") ? "✈️" :
+                t.category.includes("Education") ? "📚" :
+                "📦"
+            }
 
-<div style="font-size:12px;color:#94a3b8;margin-top:6px;">
-${t.date}
-</div>
+        </div>
 
-</div>
+        <div>
 
-<div style="text-align:right;">
+            <div class="txCategory">
 
-<div style="
-font-size:18px;
-font-weight:700;
-color:${t.type=="Income" ? "#22c55e" : "#ef4444"};
-">
+                ${t.category}
 
-${t.type=="Income" ? "+" : "-"}
+            </div>
 
-${money(t.amount)}
+            <div class="txNote">
 
-</div>
+                ${t.note || "No notes"}
 
-<button
-style="
-margin-top:10px;
-padding:8px 14px;
-font-size:13px;
-width:auto;
-background:#ef4444;
-"
-onclick="deleteTx(${t.id})">
+            </div>
 
-Delete
+            <div class="txDate">
 
-</button>
+                ${t.date}
 
-</div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="txRight">
+
+        <div class="${t.type==="Income"?"incomeAmount":"expenseAmount"}">
+
+            ${t.type==="Income" ? "+" : "-"}
+
+            ${money(t.amount)}
+
+        </div>
+
+        <button class="deleteBtn"
+
+        onclick="deleteTx(${t.id})">
+
+            🗑
+
+        </button>
+
+    </div>
 
 </div>
 
