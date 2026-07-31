@@ -19,57 +19,65 @@
 
 <body>
 
-<h1>💰 Money Manager</h1>
+<div class="app">
 
-<!-- Dashboard -->
+<header class="topBar">
 
-<div class="card">
+    <div>
 
-    <div class="balanceTitle">
-        Current Balance
+        <h1>Money Manager</h1>
+
+        <p class="subtitle">
+            Track every rupee.
+        </p>
+
     </div>
 
-    <div id="bal">
-        ₹0
+    <div class="avatar">
+        💰
     </div>
+
+</header>
+
+
+
+<!-- BALANCE CARD -->
+
+<section class="balanceCard">
+
+    <p>Total Balance</p>
+
+    <h2 id="bal">₹0</h2>
 
     <div class="stats">
 
-        <div class="stat income">
+        <div class="incomeCard">
 
-            <div class="label">
-                Income
-            </div>
+            <small>Income</small>
 
-            <div id="inc">
-                ₹0
-            </div>
+            <h3 id="inc">₹0</h3>
 
         </div>
 
-        <div class="stat expense">
+        <div class="expenseCard">
 
-            <div class="label">
-                Expense
-            </div>
+            <small>Expense</small>
 
-            <div id="exp">
-                ₹0
-            </div>
+            <h3 id="exp">₹0</h3>
 
         </div>
 
     </div>
 
-</div>
+</section>
 
-<!-- Add Transaction -->
 
-<div class="card">
 
-<h2>
-Add Transaction
-</h2>
+<!-- ADD TRANSACTION -->
+
+<section class="card">
+
+<h2>Add Transaction</h2>
 
 <input
 id="amt"
@@ -78,75 +86,68 @@ placeholder="Amount">
 
 <select id="type">
 
-<option value="Expense">
-Expense
-</option>
+<option>Expense</option>
 
-<option value="Income">
-Income
-</option>
+<option>Income</option>
 
 </select>
 
 <select id="cat">
 
 <option>🍔 Food</option>
-
 <option>🚗 Transport</option>
-
 <option>🛍 Shopping</option>
-
 <option>💡 Bills</option>
-
 <option>🎬 Entertainment</option>
-
 <option>💼 Salary</option>
-
-<option>📚 Education</option>
-
 <option>🏥 Medical</option>
-
 <option>✈ Travel</option>
-
+<option>📚 Education</option>
 <option>📦 Other</option>
 
 </select>
 
 <input
 id="note"
-placeholder="Reason / Notes">
+placeholder="Reason">
 
 <button onclick="addTx()">
-➕ Save Transaction
+
+Save Transaction
+
 </button>
 
-</div>
+</section>
 
-<!-- History -->
 
-<div class="card">
 
-<div class="sectionTitle">
+<!-- HISTORY -->
 
-Transactions
+<section class="card">
 
-</div>
+<h2>
+
+Recent Transactions
+
+</h2>
 
 <ul id="list">
 
 </ul>
 
-</div>
+</section>
 
-<!-- PDF -->
 
-<div class="card">
 
-<div class="sectionTitle">
+<!-- REPORT -->
+
+<section class="card">
+
+<h2>
 
 Reports
 
-</div>
+</h2>
 
 <button onclick="exportPDF()">
 
@@ -154,17 +155,17 @@ Reports
 
 </button>
 
-</div>
+</section>
 
-<div id="toast">
 
-Saved Successfully
 
-</div>
+<div id="toast"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/jspdf@3.0.1/dist/jspdf.umd.min.js"></script>
 
 <script src="app.js"></script>
+
+</div>
 
 </body>
 
