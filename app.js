@@ -346,4 +346,5 @@ if ("serviceWorker" in navigator) {
 
 }
 
+updateMonthTitle();
 render();
