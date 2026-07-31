@@ -49,13 +49,7 @@ function addTx() {
 
         note: note.value,
 
-        date: new Date().toLocaleDateString("en-IN", {
-
-            day: "2-digit",
-            month: "short",
-            year: "numeric"
-
-        })
+        date: new Date().toISOString()
 
     });
 
