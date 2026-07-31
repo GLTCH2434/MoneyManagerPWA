@@ -11,6 +11,7 @@ const list = document.getElementById("list");
 const toast = document.getElementById("toast");
 
 let tx = JSON.parse(localStorage.getItem("tx")) || [];
+let selectedDate = new Date();
 
 function save() {
     localStorage.setItem("tx", JSON.stringify(tx));
