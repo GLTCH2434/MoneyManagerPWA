@@ -297,7 +297,15 @@ async function exportPDF(){
 
     );
 
-    pdf.save("MoneyManagerReport.pdf");
+    const now = new Date();
+
+const monthName = now.toLocaleString("en-US", {
+    month: "long"
+});
+
+const year = now.getFullYear();
+
+pdf.save(`${monthName} ${year} Report.pdf`);
 
     showToast("PDF Exported");
 
