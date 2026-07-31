@@ -105,13 +105,37 @@ Reports
 
 </h2>
 
-<button onclick="exportPDF()">
+<button onclick="showMonthDialog()">
 
-📄 Export Monthly PDF
+📄 Export Monthly Report
 
 </button>
 
 </section>
+
+<div id="monthDialog" class="dialog">
+
+    <div class="dialogBox">
+
+        <h2>Select Month</h2>
+
+        <select id="reportMonth"></select>
+
+        <button onclick="generateMonthlyPDF()">
+
+            Export
+
+        </button>
+
+        <button onclick="closeMonthDialog()">
+
+            Cancel
+
+        </button>
+
+    </div>
+
+</div>
 
 <!-- Floating Button -->
 
