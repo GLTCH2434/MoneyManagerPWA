@@ -679,3 +679,102 @@ text-align:center;
 margin-top:12px;
 
 }
+
+/* Budgets */
+
+.budgetSummary{
+display:flex;
+gap:15px;
+margin-bottom:18px;
+}
+
+.budgetSummary > div{
+flex:1;
+padding:16px;
+border-radius:16px;
+background:rgba(255,255,255,.08);
+text-align:center;
+}
+
+.budgetSummary small{
+color:#b6bfd2;
+font-size:12px;
+}
+
+.budgetSummary h3{
+font-size:19px;
+margin-top:6px;
+}
+
+.budgetRow{
+padding:14px 0;
+border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+.budgetRow:last-child{
+border-bottom:none;
+padding-bottom:4px;
+}
+
+.budgetRowTop{
+display:flex;
+justify-content:space-between;
+align-items:center;
+font-size:14px;
+font-weight:600;
+margin-bottom:9px;
+}
+
+.budgetRowTop .over{
+color:#ef4444;
+font-weight:700;
+}
+
+.bar{
+height:8px;
+border-radius:10px;
+background:rgba(255,255,255,.12);
+overflow:hidden;
+}
+
+.barFill{
+height:100%;
+border-radius:10px;
+background:linear-gradient(90deg,#22c55e,#4ade80);
+transition:width .3s ease;
+}
+
+.barFill.over{
+background:linear-gradient(90deg,#ef4444,#f87171);
+}
+
+.budgetEmpty{
+color:#b6bfd2;
+font-size:14px;
+padding:6px 0;
+}
+
+.budgetHint{
+color:#b6bfd2;
+font-size:13px;
+margin-bottom:12px;
+text-align:center;
+}
+
+.budgetLabel{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:12px;
+margin:9px 0;
+}
+
+.budgetLabel span{
+font-size:14px;
+}
+
+.budgetInput{
+width:120px;
+padding:11px;
+margin:0;
+}

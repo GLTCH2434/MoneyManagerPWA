@@ -79,6 +79,42 @@
 
 </section>
 
+<!-- BUDGETS -->
+
+<section class="card">
+
+<h2>🎯 Monthly Budgets</h2>
+
+<div class="budgetSummary">
+
+    <div>
+
+        <small>Budget</small>
+
+        <h3 id="budgetTotal">₹0</h3>
+
+    </div>
+
+    <div>
+
+        <small>Spent this month</small>
+
+        <h3 id="budgetSpent">₹0</h3>
+
+    </div>
+
+</div>
+
+<div id="budgetList"></div>
+
+<button onclick="openBudgetDialog()">
+
+Set / Update Budgets
+
+</button>
+
+</section>
+
 
 
 <!-- ADD TRANSACTION -->
@@ -147,6 +183,34 @@ Reports
 
 </div>
 
+<!-- BUDGET DIALOG -->
+
+<div id="budgetDialog" class="dialog">
+
+    <div class="dialogBox">
+
+        <h2>Set Monthly Budgets</h2>
+
+        <p class="budgetHint">Set a monthly limit per category. Leave blank for no budget.</p>
+
+        <div id="budgetInputs"></div>
+
+        <button onclick="saveBudgets()">
+
+            Save
+
+        </button>
+
+        <button onclick="closeBudgetDialog()">
+
+            Cancel
+
+        </button>
+
+    </div>
+
+</div>
+
 <!-- Floating Button -->
 
 <button id="fab" onclick="openModal()">
@@ -184,7 +248,8 @@ placeholder="Amount">
 <option>💼 Salary</option>
 <option>🏥 Medical</option>
 <option>✈ Travel</option>
-<option>📚 Education</option>
+<option>🏦 Savings</option>
+<option>💳 EMI</option>
 <option>📦 Other</option>
 
 </select>

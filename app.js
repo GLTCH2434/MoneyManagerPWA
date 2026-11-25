@@ -12,6 +12,8 @@ const toast = document.getElementById("toast");
 
 let tx = JSON.parse(localStorage.getItem("tx")) || [];
 
+let budgets = JSON.parse(localStorage.getItem("budgets")) || {};
+
 function save() {
     localStorage.setItem("tx", JSON.stringify(tx));
     render();
@@ -132,7 +134,8 @@ function render() {
                 t.category.includes("Salary") ? "💼" :
                 t.category.includes("Medical") ? "🏥" :
                 t.category.includes("Travel") ? "✈️" :
-                t.category.includes("Education") ? "📚" :
+                t.category.includes("Savings") ? "🏦" :
+                t.category.includes("EMI") ? "💳" :
                 "📦"
             }
 
@@ -196,6 +199,90 @@ function render() {
 
     exp.innerText = money(expense);
 
+    renderBudgets();
+
+}
+
+function cleanCatName(c){
+    return c.replace(/^[^\p{L}\p{N}]+/u, "").trim() || c;
+}
+
+function monthKey(dateStr){
+    const d = new Date(dateStr);
+    return d.getFullYear() + "-" + d.getMonth();
+}
+
+function spentThisMonth(category){
+    const key = monthKey(new Date());
+    return tx
+        .filter(t => t.type === "Expense" && t.category === category && monthKey(t.date) === key)
+        .reduce((s,t) => s + t.amount, 0);
+}
+
+function renderBudgets(){
+    const listEl = document.getElementById("budgetList");
+    const entries = Object.entries(budgets).filter(([c,amt]) => Number(amt) > 0);
+
+    let totalBudget = 0, totalSpent = 0;
+
+    if (entries.length === 0){
+        listEl.innerHTML = '<p class="budgetEmpty">No budgets set yet. Tap "Set / Update Budgets" to start.</p>';
+    } else {
+        listEl.innerHTML = "";
+        entries.forEach(([c,amt]) => {
+            amt = Number(amt);
+            const spent = spentThisMonth(c);
+            totalBudget += amt;
+            totalSpent += spent;
+            const pct = amt > 0 ? Math.min(100, Math.round((spent / amt) * 100)) : 0;
+            const over = spent > amt;
+            listEl.innerHTML += `
+                <div class="budgetRow">
+                    <div class="budgetRowTop">
+                        <span>${cleanCatName(c)}</span>
+                        <span class="${over ? "over" : ""}">${money(spent)} / ${money(amt)}</span>
+                    </div>
+                    <div class="bar"><div class="barFill ${over ? "over" : ""}" style="width:${pct}%"></div></div>
+                </div>
+            `;
+        });
+    }
+
+    document.getElementById("budgetTotal").innerText = money(totalBudget);
+    document.getElementById("budgetSpent").innerText = money(totalSpent);
+}
+
+function openBudgetDialog(){
+    const box = document.getElementById("budgetInputs");
+    box.innerHTML = "";
+    const cats = Array.from(document.getElementById("cat").options).map(o => o.value);
+    cats.forEach(c => {
+        const cur = budgets[c] || "";
+        box.innerHTML += `
+            <label class="budgetLabel">
+                <span>${cleanCatName(c)}</span>
+                <input type="number" class="budgetInput" data-cat="${c}" placeholder="—" value="${cur}">
+            </label>
+        `;
+    });
+    document.getElementById("budgetDialog").classList.add("show");
+}
+
+function closeBudgetDialog(){
+    document.getElementById("budgetDialog").classList.remove("show");
+}
+
+function saveBudgets(){
+    document.querySelectorAll(".budgetInput").forEach(inp => {
+        const c = inp.dataset.cat;
+        const v = Number(inp.value);
+        if (inp.value !== "" && v > 0) budgets[c] = v;
+        else delete budgets[c];
+    });
+    localStorage.setItem("budgets", JSON.stringify(budgets));
+    renderBudgets();
+    closeBudgetDialog();
+    showToast("Budgets Saved ✓");
 }
 
 function showMonthDialog(){
@@ -287,23 +374,94 @@ async function exportPDF(){
 
     pdf.setTextColor(0);
 
+    let y = 48;
+
+    // Summary
     pdf.setFontSize(18);
-    pdf.text("Summary",15,48);
+    pdf.text("Summary",15,y);
+
+    y += 12;
 
     pdf.setFontSize(12);
 
-    pdf.text("Income",20,60);
-    pdf.text("Rs. "+income.toLocaleString("en-IN"),90,60);
+    pdf.text("Income",20,y);
+    pdf.text("Rs. "+income.toLocaleString("en-IN"),90,y);
 
-    pdf.text("Expense",20,70);
-    pdf.text("Rs. "+expense.toLocaleString("en-IN"),90,70);
+    y += 10;
 
-    pdf.text("Balance",20,80);
-    pdf.text("Rs. "+balance.toLocaleString("en-IN"),90,80);
+    pdf.text("Expense",20,y);
+    pdf.text("Rs. "+expense.toLocaleString("en-IN"),90,y);
+
+    y += 10;
+
+    pdf.text("Balance",20,y);
+    pdf.text("Rs. "+balance.toLocaleString("en-IN"),90,y);
+
+    y += 22;
+
+    // Category-wise spending
+    if (y > 250){ pdf.addPage(); y = 20; }
+
+    pdf.setFontSize(18);
+    pdf.text("Category-wise Spending",15,y);
+
+    y += 8;
+
+    const byCat = {};
+
+    tx.forEach(t=>{
+        if(!byCat[t.category]) byCat[t.category] = { income:0, expense:0 };
+        if(t.type === "Income") byCat[t.category].income += t.amount;
+        else byCat[t.category].expense += t.amount;
+    });
+
+    const catRows = Object.entries(byCat)
+        .map(([c,v]) => ({ name: cleanCatName(c), income:v.income, expense:v.expense }))
+        .sort((a,b) => (b.expense - a.expense) || (b.income - a.income) || a.name.localeCompare(b.name));
 
     pdf.autoTable({
 
-        startY:95,
+        startY: y,
+
+        head:[[
+            "Category",
+            "Income",
+            "Expense"
+        ]],
+
+        body: catRows.map(r => [
+            r.name,
+            r.income ? "Rs. "+r.income.toLocaleString("en-IN") : "-",
+            r.expense ? "Rs. "+r.expense.toLocaleString("en-IN") : "-"
+        ]),
+
+        headStyles:{
+            fillColor:[41,98,255]
+        },
+
+        alternateRowStyles:{
+            fillColor:[245,245,245]
+        },
+
+        styles:{
+            fontSize:10
+        }
+
+    });
+
+    y = pdf.lastAutoTable.finalY + 22;
+
+    // All transactions
+    if (y > 250){ pdf.addPage(); y = 20; }
+
+    pdf.setFontSize(18);
+    pdf.text("Transactions",15,y);
+
+    y += 8;
+
+    pdf.autoTable({
+
+        startY: y,
 
         head:[[
             "Date",
