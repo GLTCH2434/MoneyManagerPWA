@@ -332,6 +332,87 @@ function closeMonthDialog(){
 
 }
 
+function showStatsDialog(){
+    renderStats();
+    document.getElementById("statsDialog").classList.add("show");
+}
+
+function closeStatsDialog(){
+    document.getElementById("statsDialog").classList.remove("show");
+}
+
+function renderStats(){
+    const container = document.getElementById("statsContent");
+    let income = 0, expense = 0;
+    
+    tx.forEach(t => {
+        if (t.type === "Income") income += t.amount;
+        else expense += t.amount;
+    });
+    
+    const balance = income - expense;
+    
+    // Category breakdown
+    const byCat = {};
+    tx.forEach(t => {
+        if (!byCat[t.category]) byCat[t.category] = { income: 0, expense: 0 };
+        if (t.type === "Income") byCat[t.category].income += t.amount;
+        else byCat[t.category].expense += t.amount;
+    });
+    
+    const catRows = Object.entries(byCat)
+        .map(([c, v]) => ({ name: cleanCatName(c), income: v.income, expense: v.expense }))
+        .sort((a, b) => (b.expense - a.expense) || (b.income - a.income) || a.name.localeCompare(b.name));
+    
+    const totalExpense = catRows.reduce((sum, r) => sum + r.expense, 0);
+    
+    let html = `
+        <div class="statsGrid">
+            <div class="statCard">
+                <div class="statLabel">Total Income</div>
+                <div class="statValue incomeVal">${money(income)}</div>
+            </div>
+            <div class="statCard">
+                <div class="statLabel">Total Expense</div>
+                <div class="statValue expenseVal">${money(expense)}</div>
+            </div>
+            <div class="statCard">
+                <div class="statLabel">Balance</div>
+                <div class="statValue ${balance >= 0 ? 'incomeVal' : 'expenseVal'}">${money(balance)}</div>
+            </div>
+            <div class="statCard">
+                <div class="statLabel">Transactions</div>
+                <div class="statValue">${tx.length}</div>
+            </div>
+        </div>
+        <div class="statsCategoryTitle">Category Breakdown</div>
+        <div class="statsCategoryList">
+    `;
+    
+    if (catRows.length === 0) {
+        html += `<div class="statsEmpty">No transactions yet</div>`;
+    } else {
+        catRows.forEach(r => {
+            const pct = totalExpense > 0 ? ((r.expense / totalExpense) * 100).toFixed(1) : '0.0';
+            html += `
+                <div class="statsCatRow">
+                    <div class="statsCatInfo">
+                        <span class="statsCatName">${r.name}</span>
+                        <span class="statsCatPct">${pct}%</span>
+                    </div>
+                    <div class="statsCatAmounts">
+                        ${r.income > 0 ? `<span class="incomeVal">+${money(r.income)}</span>` : ''}
+                        ${r.expense > 0 ? `<span class="expenseVal">-${money(r.expense)}</span>` : ''}
+                    </div>
+                </div>
+            `;
+        });
+    }
+    
+    html += `</div>`;
+    container.innerHTML = html;
+}
+
 function generateMonthlyPDF(){
 
     const month=document
