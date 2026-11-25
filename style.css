@@ -288,27 +288,35 @@ body{
     letter-spacing:-.3px;
 }
 
-/* FAB Wrapper */
-.fabWrapper{
+/* Balance Card Header with FAB */
+.balanceHeader{
     display:flex;
-    justify-content:center;
-    margin:-12px auto 24px;
-    z-index:100;
-    position:relative;
+    justify-content:space-between;
+    align-items:flex-start;
+    margin-bottom:8px;
 }
 
-.fabWrapper .fabBtn{
-    width:68px;
-    height:68px;
-    border-radius:50%;
-    font-size:34px;
+.balanceHeader p{
+    opacity:.75;
+    font-size:14px;
+    font-weight:400;
+    letter-spacing:.5px;
+    text-transform:uppercase;
+    margin:0;
+}
+
+.balanceCard .fabBtn{
+    width:44px;
+    height:44px;
+    border-radius:14px;
+    font-size:24px;
     font-weight:800;
     padding:0;
     background:
         linear-gradient(135deg,#22c55e 0%,#16a34a 50%,#15803d 100%);
     box-shadow:
-        0 16px 40px rgba(34,197,94,.45),
-        0 4px 16px rgba(34,197,94,.3),
+        0 8px 24px rgba(34,197,94,.45),
+        0 2px 8px rgba(34,197,94,.3),
         inset 0 1px 0 rgba(255,255,255,.2),
         inset 0 -1px 0 rgba(0,0,0,.1);
     border:none;
@@ -317,9 +325,10 @@ body{
     transition:var(--transition);
     position:relative;
     overflow:hidden;
+    flex-shrink:0;
 }
 
-.fabWrapper .fabBtn::before{
+.balanceCard .fabBtn::before{
     content:'';
     position:absolute;
     inset:0;
@@ -328,19 +337,19 @@ body{
     transition:var(--transition-fast);
 }
 
-.fabWrapper .fabBtn:hover{
-    transform:scale(1.08) rotate(90deg);
+.balanceCard .fabBtn:hover{
+    transform:scale(1.1) rotate(90deg);
     box-shadow:
-        0 20px 48px rgba(34,197,94,.55),
-        0 8px 24px rgba(34,197,94,.4),
+        0 12px 32px rgba(34,197,94,.55),
+        0 4px 12px rgba(34,197,94,.4),
         inset 0 1px 0 rgba(255,255,255,.3);
 }
 
-.fabWrapper .fabBtn:hover::before{
+.balanceCard .fabBtn:hover::before{
     opacity:1;
 }
 
-.fabWrapper .fabBtn:active{
+.balanceCard .fabBtn:active{
     transform:scale(.95) rotate(90deg);
 }
 

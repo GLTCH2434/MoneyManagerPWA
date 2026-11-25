@@ -58,7 +58,12 @@
 
 <section class="balanceCard">
 
-    <p>Total Balance</p>
+    <div class="balanceHeader">
+        <p>Total Balance</p>
+        <button id="fab" onclick="openModal()" class="fabBtn" title="Add Transaction" aria-label="Add Transaction">
+            +
+        </button>
+    </div>
 
     <h2 id="bal">₹0</h2>
 
@@ -83,14 +88,6 @@
     </div>
 
 </section>
-
-<!-- ADD TRANSACTION BUTTON -->
-
-<div class="fabWrapper">
-    <button id="fab" onclick="openModal()" class="fabBtn" title="Add Transaction">
-        +
-    </button>
-</div>
 
 <!-- BUDGETS -->
 
