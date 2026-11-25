@@ -10,11 +10,23 @@ const exp = document.getElementById("exp");
 const list = document.getElementById("list");
 const toast = document.getElementById("toast");
 
+// Budget elements
+const budgetName = document.getElementById("budgetName");
+const budgetAmount = document.getElementById("budgetAmount");
+const budgetCategory = document.getElementById("budgetCategory");
+const budgetNote = document.getElementById("budgetNote");
+
 let tx = JSON.parse(localStorage.getItem("tx")) || [];
+let budgets = JSON.parse(localStorage.getItem("budgets")) || [];
 
 function save() {
     localStorage.setItem("tx", JSON.stringify(tx));
     render();
+}
+
+function saveBudgets() {
+    localStorage.setItem("budgets", JSON.stringify(budgets));
+    renderBudgets();
 }
 
 function money(x) {
@@ -263,6 +275,167 @@ function showStatsDialog(){
 
 function closeStatsDialog(){
     document.getElementById("statsDialog").classList.remove("show");
+}
+
+// Budgets Dialog
+function showBudgetsDialog(){
+    renderBudgets();
+    document.getElementById("budgetsDialog").classList.add("show");
+}
+
+function closeBudgetsDialog(){
+    document.getElementById("budgetsDialog").classList.remove("show");
+    closeBudgetModal();
+}
+
+function renderBudgets(){
+    const container = document.getElementById("budgetsContent");
+    const currentMonth = monthKey(new Date().toISOString());
+    
+    // Filter budgets for current month
+    const currentBudgets = budgets.filter(b => b.month === currentMonth);
+    
+    if (currentBudgets.length === 0) {
+        container.innerHTML = `
+            <div class="statsEmpty">No budgets for this month</div>
+            <button onclick="openBudgetModal()" style="margin-top:16px;">+ Add Budget</button>
+        `;
+        return;
+    }
+    
+    let html = '';
+    currentBudgets.forEach(b => {
+        const spent = calculateBudgetSpent(b);
+        const remaining = b.amount - spent;
+        const pct = b.amount > 0 ? Math.min(100, (spent / b.amount) * 100) : 0;
+        const isOver = spent > b.amount;
+        
+        html += `
+            <div class="budgetCard" style="${isOver ? 'border-color: var(--red);' : ''}">
+                <div class="budgetHeader">
+                    <div class="budgetInfo">
+                        <div class="budgetName">${b.name}</div>
+                        ${b.category ? `<div class="budgetCategory">${b.category}</div>` : '<div class="budgetCategory">Standalone</div>'}
+                        ${b.note ? `<div class="budgetNote">${b.note}</div>` : ''}
+                    </div>
+                    <div class="budgetActions">
+                        ${!b.category ? `<button class="budgetLogBtn" onclick="logBudgetSpend(${b.id})">+ Log Spend</button>` : ''}
+                        <button class="deleteBtn" onclick="deleteBudget(${b.id})">🗑</button>
+                    </div>
+                </div>
+                <div class="budgetProgress">
+                    <div class="budgetProgressBar" style="background: ${isOver ? 'var(--red)' : 'var(--blue)'}; width: ${pct}%"></div>
+                </div>
+                <div class="budgetAmounts">
+                    <span class="${isOver ? 'expenseVal' : 'incomeVal'}">Spent: ${money(spent)}</span>
+                    <span class="${remaining >= 0 ? 'incomeVal' : 'expenseVal'}">Remaining: ${money(Math.max(0, remaining))}</span>
+                    <span class="budgetTotal">Budget: ${money(b.amount)}</span>
+                </div>
+            </div>
+        `;
+    });
+    html += '<button onclick="openBudgetModal()" style="margin-top:16px;">+ Add Budget</button>';
+    container.innerHTML = html;
+}
+
+function calculateBudgetSpent(budget) {
+    if (budget.category) {
+        // Category-linked: sum expenses from that category this month
+        const currentMonth = monthKey(new Date().toISOString());
+        return tx
+            .filter(t => t.type === "Expense" && t.category === budget.category && monthKey(t.date) === currentMonth)
+            .reduce((sum, t) => sum + t.amount, 0);
+    } else {
+        // Standalone: use manually logged spend
+        return budget.spent || 0;
+    }
+}
+
+function openBudgetModal(editBudget = null) {
+    document.getElementById("budgetModal").classList.add("show");
+    document.getElementById("overlay").classList.add("show");
+    
+    if (editBudget) {
+        document.getElementById("budgetModalTitle").innerText = "Edit Budget";
+        budgetName.value = editBudget.name;
+        budgetAmount.value = editBudget.amount;
+        budgetCategory.value = editBudget.category || "";
+        budgetNote.value = editBudget.note || "";
+        budgetName.dataset.editId = editBudget.id;
+    } else {
+        document.getElementById("budgetModalTitle").innerText = "Add Budget";
+        budgetName.value = "";
+        budgetAmount.value = "";
+        budgetCategory.value = "";
+        budgetNote.value = "";
+        delete budgetName.dataset.editId;
+    }
+}
+
+function closeBudgetModal() {
+    document.getElementById("budgetModal").classList.remove("show");
+    document.getElementById("overlay").classList.remove("show");
+    budgetName.value = "";
+    budgetAmount.value = "";
+    budgetCategory.value = "";
+    budgetNote.value = "";
+    delete budgetName.dataset.editId;
+}
+
+function saveBudget() {
+    if (!budgetName.value.trim() || budgetAmount.value === "") {
+        alert("Enter budget name and amount");
+        return;
+    }
+    
+    const currentMonth = monthKey(new Date().toISOString());
+    const editId = budgetName.dataset.editId ? Number(budgetName.dataset.editId) : null;
+    
+    if (editId) {
+        const idx = budgets.findIndex(b => b.id === editId);
+        if (idx !== -1) {
+            budgets[idx] = {
+                ...budgets[idx],
+                name: budgetName.value.trim(),
+                amount: Number(budgetAmount.value),
+                category: budgetCategory.value || null,
+                note: budgetNote.value.trim(),
+            };
+        }
+    } else {
+        budgets.unshift({
+            id: Date.now(),
+            name: budgetName.value.trim(),
+            amount: Number(budgetAmount.value),
+            category: budgetCategory.value || null,
+            note: budgetNote.value.trim(),
+            month: currentMonth,
+            spent: 0
+        });
+    }
+    
+    saveBudgets();
+    closeBudgetModal();
+    showToast(editId ? "Budget Updated ✓" : "Budget Added ✓");
+}
+
+function deleteBudget(id) {
+    if (!confirm("Delete this budget?")) return;
+    budgets = budgets.filter(b => b.id !== id);
+    saveBudgets();
+    showToast("Budget Deleted", "error");
+}
+
+function logBudgetSpend(budgetId) {
+    const budget = budgets.find(b => b.id === budgetId);
+    if (!budget || budget.category) return;
+    
+    const amount = prompt("Enter amount spent:");
+    if (!amount || isNaN(amount) || Number(amount) <= 0) return;
+    
+    budget.spent = (budget.spent || 0) + Number(amount);
+    saveBudgets();
+    showToast(`Logged ₹${Number(amount).toLocaleString("en-IN")} spend`);
 }
 
 function renderStats(){
