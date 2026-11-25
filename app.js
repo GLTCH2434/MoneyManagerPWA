@@ -137,6 +137,7 @@ function render() {
                 t.category.includes("Travel") ? "✈️" :
                 t.category.includes("Savings") ? "🏦" :
                 t.category.includes("EMI") ? "💳" :
+                t.category.includes("Gifts") ? "🎁" :
                 "📦"
             }
 
@@ -254,19 +255,167 @@ function renderBudgets(){
 }
 
 function openBudgetDialog(){
+    renderBudgetDialog();
+    document.getElementById("budgetDialog").classList.add("show");
+}
+
+function renderBudgetDialog(){
     const box = document.getElementById("budgetInputs");
     box.innerHTML = "";
+    
     const cats = Array.from(document.getElementById("cat").options).map(o => o.value);
+    
+    // Calculate total income for reference
+    const totalIncome = tx.filter(t => t.type === "Income").reduce((s, t) => s + t.amount, 0);
+    
     cats.forEach(c => {
         const cur = budgets[c] || "";
+        const spent = spentThisMonth(c);
+        const budgetAmt = Number(cur) || 0;
+        const pct = budgetAmt > 0 ? Math.min(100, Math.round((spent / budgetAmt) * 100)) : 0;
+        const over = spent > budgetAmt && budgetAmt > 0;
+        const hasBudget = budgetAmt > 0;
+        
+        let statusClass = "";
+        let statusText = "No budget set";
+        if (hasBudget) {
+            if (over) { statusClass = "over"; statusText = "Over budget"; }
+            else if (pct >= 80) { statusClass = "warning"; statusText = "Near limit"; }
+            else { statusClass = "ok"; statusText = "On track"; }
+        }
+        
         box.innerHTML += `
-            <label class="budgetLabel">
-                <span>${cleanCatName(c)}</span>
-                <input type="number" class="budgetInput" data-cat="${c}" placeholder="—" value="${cur}">
-            </label>
+            <div class="budgetCard" data-cat="${c}">
+                <div class="budgetCardHeader">
+                    <span class="budgetCatName">${cleanCatName(c)}</span>
+                    <span class="budgetStatus ${statusClass}">${statusText}</span>
+                </div>
+                <div class="budgetProgress">
+                    <div class="budgetProgressBar">
+                        <div class="budgetProgressFill ${statusClass}" style="width:${pct}%"></div>
+                    </div>
+                    <div class="budgetProgressLabels">
+                        <span class="spentLabel">Spent: ${money(spent)}</span>
+                        <span class="budgetLabel">Budget: ${hasBudget ? money(budgetAmt) : "—"}</span>
+                    </div>
+                </div>
+                <div class="budgetInputWrapper">
+                    <label class="budgetInputLabel">Monthly Budget</label>
+                    <div class="budgetInputRow">
+                        <span class="currencyPrefix">₹</span>
+                        <input type="number" class="budgetInput" data-cat="${c}" placeholder="Enter amount" value="${cur}" min="0" step="100">
+                    </div>
+                    ${hasBudget ? `
+                        <div class="budgetQuickRow">
+                            <button type="button" class="microBtn" onclick="adjustBudget('${c}', 500)">+₹500</button>
+                            <button type="button" class="microBtn" onclick="adjustBudget('${c}', -500)">-₹500</button>
+                            <button type="button" class="microBtn" onclick="setBudgetToSpent('${c}')">Match Spent</button>
+                            <button type="button" class="microBtn danger" onclick="removeBudget('${c}')">Remove</button>
+                        </div>
+                    ` : ""}
+                </div>
+            </div>
         `;
     });
-    document.getElementById("budgetDialog").classList.add("show");
+    
+    // Update summary
+    updateBudgetDialogSummary();
+}
+
+function updateBudgetDialogSummary(){
+    const entries = Object.entries(budgets).filter(([c,amt]) => Number(amt) > 0);
+    let totalBudget = 0, totalSpent = 0;
+    
+    entries.forEach(([c,amt]) => {
+        amt = Number(amt);
+        const spent = spentThisMonth(c);
+        totalBudget += amt;
+        totalSpent += spent;
+    });
+    
+    const remaining = totalBudget - totalSpent;
+    
+    document.getElementById("dialogBudgetTotal").innerText = money(totalBudget);
+    document.getElementById("dialogBudgetSpent").innerText = money(totalSpent);
+    document.getElementById("dialogBudgetRemaining").innerText = money(remaining);
+    
+    const remainingEl = document.getElementById("dialogBudgetRemaining");
+    remainingEl.style.color = remaining >= 0 ? "var(--green)" : "var(--red)";
+}
+
+function adjustBudget(cat, delta){
+    const input = document.querySelector(`.budgetInput[data-cat="${cat}"]`);
+    if (input) {
+        const current = Number(input.value) || 0;
+        const next = Math.max(0, current + delta);
+        input.value = next || "";
+        updateBudgetDialogSummary();
+    }
+}
+
+function setBudgetToSpent(cat){
+    const spent = spentThisMonth(cat);
+    const input = document.querySelector(`.budgetInput[data-cat="${cat}"]`);
+    if (input && spent > 0) {
+        input.value = spent;
+        updateBudgetDialogSummary();
+    }
+}
+
+function removeBudget(cat){
+    const input = document.querySelector(`.budgetInput[data-cat="${cat}"]`);
+    if (input) {
+        input.value = "";
+        updateBudgetDialogSummary();
+    }
+}
+
+function quickSetBudgets(mode){
+    const cats = Array.from(document.getElementById("cat").options).map(o => o.value);
+    const totalIncome = tx.filter(t => t.type === "Income").reduce((s, t) => s + t.amount, 0);
+    
+    if (mode === "percentage" && totalIncome > 0) {
+        // Suggest 50/30/20 rule adapted
+        const suggested = {
+            "🍔 Food": 0.25,
+            "🚗 Transport": 0.10,
+            "🛍 Shopping": 0.10,
+            "💡 Bills": 0.15,
+            "🎬 Entertainment": 0.05,
+            "💼 Salary": 0,
+            "🏥 Medical": 0.05,
+            "✈ Travel": 0.05,
+            "🏦 Savings": 0.20,
+            "💳 EMI": 0.05,
+            "🎁 Gifts": 0.05,
+            "📦 Other": 0
+        };
+        cats.forEach(c => {
+            const pct = suggested[c] || 0;
+            if (pct > 0) {
+                const input = document.querySelector(`.budgetInput[data-cat="${c}"]`);
+                if (input) input.value = Math.round(totalIncome * pct);
+            }
+        });
+    } else if (mode === "equal" && totalIncome > 0) {
+        const expenseCats = cats.filter(c => !c.includes("Salary") && !c.includes("Savings"));
+        const perCat = Math.round(totalIncome * 0.5 / expenseCats.length);
+        expenseCats.forEach(c => {
+            const input = document.querySelector(`.budgetInput[data-cat="${c}"]`);
+            if (input) input.value = perCat;
+        });
+    }
+    updateBudgetDialogSummary();
+    showToast("Quick budgets applied", "success");
+}
+
+function clearAllBudgets(){
+    if (!confirm("Clear all budgets?")) return;
+    document.querySelectorAll(".budgetInput").forEach(input => {
+        input.value = "";
+    });
+    updateBudgetDialogSummary();
+    showToast("All budgets cleared", "success");
 }
 
 function closeBudgetDialog(){

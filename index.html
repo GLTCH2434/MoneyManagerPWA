@@ -147,29 +147,47 @@ Recent Transactions
 <!-- BUDGET DIALOG -->
 
 <div id="budgetDialog" class="dialog">
-
-    <div class="dialogBox">
-
-        <h2>Set Monthly Budgets</h2>
-
+    <div class="dialogBox budgetDialogBox">
+        <div class="budgetDialogHeader">
+            <h2>🎯 Monthly Budgets</h2>
+            <button class="closeBtn" onclick="closeBudgetDialog()" aria-label="Close">✕</button>
+        </div>
         <p class="budgetHint">Set a monthly limit per category. Leave blank for no budget.</p>
-
-        <div id="budgetInputs"></div>
-
-        <button onclick="saveBudgets()">
-
-            Save
-
-        </button>
-
-        <button onclick="closeBudgetDialog()">
-
-            Cancel
-
-        </button>
-
+        
+        <div class="budgetDialogSummary">
+            <div class="budgetStatCard">
+                <span class="budgetStatLabel">Total Budget</span>
+                <span class="budgetStatValue" id="dialogBudgetTotal">₹0</span>
+            </div>
+            <div class="budgetStatCard">
+                <span class="budgetStatLabel">Spent This Month</span>
+                <span class="budgetStatValue" id="dialogBudgetSpent">₹0</span>
+            </div>
+            <div class="budgetStatCard">
+                <span class="budgetStatLabel">Remaining</span>
+                <span class="budgetStatValue" id="dialogBudgetRemaining">₹0</span>
+            </div>
+        </div>
+        
+        <div id="budgetInputs" class="budgetInputsGrid"></div>
+        
+        <div class="budgetQuickActions">
+            <button type="button" class="quickActionBtn" onclick="quickSetBudgets('percentage')">
+                📊 Set by % of Income
+            </button>
+            <button type="button" class="quickActionBtn" onclick="quickSetBudgets('equal')">
+                ⚖️ Equal Split
+            </button>
+            <button type="button" class="quickActionBtn danger" onclick="clearAllBudgets()">
+                🗑️ Clear All
+            </button>
+        </div>
+        
+        <div class="budgetDialogActions">
+            <button onclick="closeBudgetDialog()" class="secondaryBtn">Cancel</button>
+            <button onclick="saveBudgets()" class="primaryBtn">Save Budgets</button>
+        </div>
     </div>
-
 </div>
 
 <!-- Bottom Sheet -->
@@ -205,6 +223,7 @@ placeholder="Amount">
 <option>✈ Travel</option>
 <option>🏦 Savings</option>
 <option>💳 EMI</option>
+<option>🎁 Gifts</option>
 <option>📦 Other</option>
 
 </select>
