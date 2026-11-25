@@ -23,13 +23,13 @@ function money(x) {
     return "₹" + Number(x).toLocaleString("en-IN");
 }
 
-function showToast(msg) {
+function showToast(msg, type = "success") {
     toast.innerText = msg;
-    toast.classList.add("show");
+    toast.className = "show " + type;
 
     setTimeout(() => {
         toast.classList.remove("show");
-    }, 1800);
+    }, 2000);
 }
 
 function addTx() {
@@ -73,7 +73,7 @@ function deleteTx(id) {
 
     save();
 
-    showToast("Deleted");
+    showToast("Deleted", "error");
 
 }
 
@@ -116,6 +116,7 @@ function render() {
             expense += t.amount;
 
         let li = document.createElement("li");
+        li.className = t.type === "Income" ? "income-item" : "";
 
        li.innerHTML = `
 
@@ -282,7 +283,7 @@ function saveBudgets(){
     localStorage.setItem("budgets", JSON.stringify(budgets));
     renderBudgets();
     closeBudgetDialog();
-    showToast("Budgets Saved ✓");
+    showToast("Budgets Saved ✓", "success");
 }
 
 function showMonthDialog(){
@@ -419,6 +420,72 @@ async function exportPDF(){
         .map(([c,v]) => ({ name: cleanCatName(c), income:v.income, expense:v.expense }))
         .sort((a,b) => (b.expense - a.expense) || (b.income - a.income) || a.name.localeCompare(b.name));
 
+    // Calculate total expense for percentage
+    const totalExpense = catRows.reduce((sum, r) => sum + r.expense, 0);
+
+    // Create pie chart for expenses
+    const expenseCats = catRows.filter(r => r.expense > 0);
+    if (expenseCats.length > 0) {
+        const chartCanvas = document.createElement('canvas');
+        chartCanvas.width = 400;
+        chartCanvas.height = 400;
+        const ctx = chartCanvas.getContext('2d');
+        
+        const chartColors = [
+            '#EF4444', '#F97316', '#F59E0B', '#EAB308',
+            '#84CC16', '#22C55E', '#10B981', '#14B8A6',
+            '#06B6D4', '#0EA5E9', '#3B82F6', '#6366F1',
+            '#8B5CF6', '#A855F7', '#D946EF', '#EC4899'
+        ];
+        
+        new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: expenseCats.map(r => r.name),
+                datasets: [{
+                    data: expenseCats.map(r => r.expense),
+                    backgroundColor: chartColors.slice(0, expenseCats.length),
+                    borderWidth: 2,
+                    borderColor: '#ffffff'
+                }]
+            },
+            options: {
+                responsive: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        enabled: false
+                    }
+                }
+            }
+        });
+        
+        // Add pie chart image to PDF
+        const chartImgData = chartCanvas.toDataURL('image/png');
+        const chartWidth = 80; // mm
+        const chartHeight = 80; // mm
+        pdf.addImage(chartImgData, 'PNG', 15, y, chartWidth, chartHeight);
+        
+        // Add legend next to pie chart
+        let legendY = y;
+        expenseCats.forEach((r, i) => {
+            const pct = totalExpense > 0 ? ((r.expense / totalExpense) * 100).toFixed(1) : '0.0';
+            pdf.setFillColor(chartColors[i % chartColors.length]);
+            pdf.rect(105, legendY + 2, 8, 8, 'F');
+            pdf.setFontSize(9);
+            pdf.setTextColor(0);
+            pdf.text(`${r.name}: ${money(r.expense)} (${pct}%)`, 115, legendY + 8);
+            legendY += 12;
+        });
+        
+        y += Math.max(chartHeight, expenseCats.length * 12) + 10;
+    }
+
+    // Category table with percentage
+    if (y > 250){ pdf.addPage(); y = 20; }
+
     pdf.autoTable({
 
         startY: y,
@@ -426,13 +493,15 @@ async function exportPDF(){
         head:[[
             "Category",
             "Income",
-            "Expense"
+            "Expense",
+            "% of Expenses"
         ]],
 
         body: catRows.map(r => [
             r.name,
             r.income ? "Rs. "+r.income.toLocaleString("en-IN") : "-",
-            r.expense ? "Rs. "+r.expense.toLocaleString("en-IN") : "-"
+            r.expense ? "Rs. "+r.expense.toLocaleString("en-IN") : "-",
+            r.expense && totalExpense > 0 ? ((r.expense / totalExpense) * 100).toFixed(1) + "%" : "-"
         ]),
 
         headStyles:{
@@ -517,7 +586,7 @@ const year = now.getFullYear();
 
 pdf.save(`${monthName} ${year} Report.pdf`);
 
-    showToast("PDF Exported");
+    showToast("PDF Exported", "success");
 
 }
 

@@ -43,8 +43,13 @@
 
     </div>
 
-    <div class="avatar">
-        💰
+    <div class="topBarActions">
+        <button onclick="showMonthDialog()" class="topBarBtn" title="Reports">
+            📄
+        </button>
+        <div class="avatar">
+            💰
+        </div>
     </div>
 
 </header>
@@ -78,6 +83,14 @@
     </div>
 
 </section>
+
+<!-- ADD TRANSACTION BUTTON -->
+
+<div class="fabWrapper">
+    <button id="fab" onclick="openModal()" class="fabBtn" title="Add Transaction">
+        +
+    </button>
+</div>
 
 <!-- BUDGETS -->
 
@@ -151,11 +164,7 @@ Reports
 
 </h2>
 
-<button onclick="showMonthDialog()">
-
-📄 Export Monthly Report
-
-</button>
+<p class="reportHint">Tap the <span class="iconBtn">📄</span> icon in the top bar to export a monthly report.</p>
 
 </section>
 
@@ -211,12 +220,6 @@ Reports
 
 </div>
 
-<!-- Floating Button -->
-
-<button id="fab" onclick="openModal()">
-+
-</button>
-
 <!-- Bottom Sheet -->
 
 <div id="overlay" onclick="closeModal()"></div>
@@ -271,6 +274,8 @@ Save
 <script src="https://cdn.jsdelivr.net/npm/jspdf@3.0.1/dist/jspdf.umd.min.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.3/dist/jspdf.plugin.autotable.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
 <script src="app.js"></script>
 
