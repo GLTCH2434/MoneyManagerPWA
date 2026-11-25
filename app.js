@@ -343,13 +343,34 @@ function updateBudgetDialogSummary(){
     remainingEl.style.color = remaining >= 0 ? "var(--green)" : "var(--red)";
 }
 
+function updateEditBudgetDialogSummary(){
+    const entries = Object.entries(budgets).filter(([c,amt]) => Number(amt) > 0);
+    let totalBudget = 0, totalSpent = 0;
+    
+    entries.forEach(([c,amt]) => {
+        amt = Number(amt);
+        const spent = spentThisMonth(c);
+        totalBudget += amt;
+        totalSpent += spent;
+    });
+    
+    const remaining = totalBudget - totalSpent;
+    
+    document.getElementById("editDialogBudgetTotal").innerText = money(totalBudget);
+    document.getElementById("editDialogBudgetSpent").innerText = money(totalSpent);
+    document.getElementById("editDialogBudgetRemaining").innerText = money(remaining);
+    
+    const remainingEl = document.getElementById("editDialogBudgetRemaining");
+    remainingEl.style.color = remaining >= 0 ? "var(--green)" : "var(--red)";
+}
+
 function adjustBudget(cat, delta){
     const input = document.querySelector(`.budgetInput[data-cat="${cat}"]`);
     if (input) {
         const current = Number(input.value) || 0;
         const next = Math.max(0, current + delta);
         input.value = next || "";
-        updateBudgetDialogSummary();
+        updateEditBudgetDialogSummary();
     }
 }
 
@@ -358,7 +379,7 @@ function setBudgetToSpent(cat){
     const input = document.querySelector(`.budgetInput[data-cat="${cat}"]`);
     if (input && spent > 0) {
         input.value = spent;
-        updateBudgetDialogSummary();
+        updateEditBudgetDialogSummary();
     }
 }
 
@@ -366,7 +387,7 @@ function removeBudget(cat){
     const input = document.querySelector(`.budgetInput[data-cat="${cat}"]`);
     if (input) {
         input.value = "";
-        updateBudgetDialogSummary();
+        updateEditBudgetDialogSummary();
     }
 }
 
@@ -405,7 +426,7 @@ function quickSetBudgets(mode){
             if (input) input.value = perCat;
         });
     }
-    updateBudgetDialogSummary();
+    updateEditBudgetDialogSummary();
     showToast("Quick budgets applied", "success");
 }
 
@@ -414,12 +435,21 @@ function clearAllBudgets(){
     document.querySelectorAll(".budgetInput").forEach(input => {
         input.value = "";
     });
-    updateBudgetDialogSummary();
+    updateEditBudgetDialogSummary();
     showToast("All budgets cleared", "success");
 }
 
 function closeBudgetDialog(){
     document.getElementById("budgetDialog").classList.remove("show");
+}
+
+function openEditBudgetDialog(){
+    renderEditBudgetDialog();
+    document.getElementById("editBudgetDialog").classList.add("show");
+}
+
+function closeEditBudgetDialog(){
+    document.getElementById("editBudgetDialog").classList.remove("show");
 }
 
 function saveBudgets(){
@@ -435,7 +465,7 @@ function saveBudgets(){
     console.log("Budgets:", budgets);
     localStorage.setItem("budgets", JSON.stringify(budgets));
     renderBudgets();
-    closeBudgetDialog();
+    closeEditBudgetDialog();
     showToast("Budgets Saved ✓", "success");
 }
 
