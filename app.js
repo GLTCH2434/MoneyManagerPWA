@@ -423,12 +423,16 @@ function closeBudgetDialog(){
 }
 
 function saveBudgets(){
-    document.querySelectorAll(".budgetInput").forEach(inp => {
+    const inputs = document.querySelectorAll(".budgetInput");
+    console.log("Found inputs:", inputs.length);
+    inputs.forEach(inp => {
+        console.log("Input:", inp.dataset.cat, inp.value);
         const c = inp.dataset.cat;
         const v = Number(inp.value);
         if (inp.value !== "" && v > 0) budgets[c] = v;
         else delete budgets[c];
     });
+    console.log("Budgets:", budgets);
     localStorage.setItem("budgets", JSON.stringify(budgets));
     renderBudgets();
     closeBudgetDialog();
