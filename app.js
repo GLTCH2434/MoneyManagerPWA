@@ -303,7 +303,7 @@ function renderBudgetDialog(){
                     <label class="budgetInputLabel">Monthly Budget</label>
                     <div class="budgetInputRow">
                         <span class="currencyPrefix">₹</span>
-                        <input type="number" class="budgetInput" data-cat="${c}" placeholder="Enter amount" value="${cur}" min="0" step="100">
+                        <input type="text" class="budgetInput" data-cat="${c}" placeholder="Enter amount" value="${cur}" inputmode="numeric" pattern="[0-9]*" autocomplete="off">
                     </div>
                     ${hasBudget ? `
                         <div class="budgetQuickRow">
