@@ -830,6 +830,8 @@ li:hover .txIcon{
     max-height:90vh;
     overflow-y:auto;
     padding:24px;
+    z-index:2001;
+    pointer-events:auto;
 }
 
 .budgetDialogHeader{
@@ -1067,12 +1069,29 @@ li:hover .txIcon{
     font-size:17px;
     font-weight:700;
     text-align:right;
+    pointer-events:auto;
+    z-index:10;
+    position:relative;
+    -webkit-appearance:none;
+    -moz-appearance:textfield;
+}
+
+.budgetInput::-webkit-outer-spin-button,
+.budgetInput::-webkit-inner-spin-button{
+    -webkit-appearance:none;
+    margin:0;
 }
 
 .budgetInput:focus{
     border-color:var(--blue);
     box-shadow:0 0 0 3px var(--blue-glow);
     outline:none;
+    background:rgba(255,255,255,.1);
+}
+
+.budgetInput:disabled{
+    opacity:0.5;
+    cursor:not-allowed;
 }
 
 .budgetQuickRow{
