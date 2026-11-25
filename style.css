@@ -907,32 +907,6 @@ li:hover .txIcon{
     border-left:4px solid var(--red);
 }
 
-/* Report Hint */
-.reportHint{
-    color:var(--text-muted);
-    font-size:13px;
-    text-align:center;
-    margin-top:12px;
-    padding:16px;
-    background:rgba(255,255,255,.03);
-    border:1px dashed rgba(255,255,255,.08);
-    border-radius:var(--radius-sm);
-}
-
-.reportHint .iconBtn{
-    display:inline-flex;
-    width:28px;
-    height:28px;
-    border-radius:10px;
-    background:rgba(59,130,246,.15);
-    border:1px solid rgba(59,130,246,.2);
-    align-items:center;
-    justify-content:center;
-    font-size:14px;
-    margin:0 6px;
-    vertical-align:middle;
-}
-
 /* Scrollbar */
 ::-webkit-scrollbar{width:8px;height:8px;}
 ::-webkit-scrollbar-track{background:transparent;}

@@ -43,13 +43,8 @@
 
     </div>
 
-    <div class="topBarActions">
-        <button onclick="showMonthDialog()" class="topBarBtn" title="Reports">
-            📄
-        </button>
-        <div class="avatar">
-            💰
-        </div>
+    <div class="avatar">
+        💰
     </div>
 
 </header>
@@ -150,43 +145,7 @@ Recent Transactions
 
 
 
-<!-- REPORT -->
 
-<section class="card">
-
-<h2>
-
-Reports
-
-</h2>
-
-<p class="reportHint">Tap the <span class="iconBtn">📄</span> icon in the top bar to export a monthly report.</p>
-
-</section>
-
-<div id="monthDialog" class="dialog">
-
-    <div class="dialogBox">
-
-        <h2>Select Month</h2>
-
-        <select id="reportMonth"></select>
-
-        <button onclick="generateMonthlyPDF()">
-
-            Export
-
-        </button>
-
-        <button onclick="closeMonthDialog()">
-
-            Cancel
-
-        </button>
-
-    </div>
-
-</div>
 
 <!-- BUDGET DIALOG -->
 
@@ -270,8 +229,6 @@ Save
 <script src="https://cdn.jsdelivr.net/npm/jspdf@3.0.1/dist/jspdf.umd.min.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.3/dist/jspdf.plugin.autotable.min.js"></script>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
 <script src="app.js"></script>
 
