@@ -50,9 +50,6 @@
         <button onclick="showStatsDialog()" class="topBarBtn" title="Live Stats" aria-label="Live Stats">
             📊
         </button>
-        <button onclick="openBudgetDialog()" class="topBarBtn" title="Monthly Budgets" aria-label="Monthly Budgets">
-            🎯
-        </button>
     </div>
 
 </header>
@@ -144,84 +141,7 @@ Recent Transactions
     </div>
 </div>
 
-<!-- BUDGET DIALOG (VIEW) -->
 
-<div id="budgetDialog" class="dialog">
-    <div class="dialogBox budgetDialogBox">
-        <div class="budgetDialogHeader">
-            <h2>🎯 Monthly Budgets</h2>
-            <button class="closeBtn" onclick="closeBudgetDialog()" aria-label="Close">✕</button>
-        </div>
-        
-        <div class="budgetDialogSummary">
-            <div class="budgetStatCard">
-                <span class="budgetStatLabel">Total Budget</span>
-                <span class="budgetStatValue" id="dialogBudgetTotal">₹0</span>
-            </div>
-            <div class="budgetStatCard">
-                <span class="budgetStatLabel">Spent This Month</span>
-                <span class="budgetStatValue" id="dialogBudgetSpent">₹0</span>
-            </div>
-            <div class="budgetStatCard">
-                <span class="budgetStatLabel">Remaining</span>
-                <span class="budgetStatValue" id="dialogBudgetRemaining">₹0</span>
-            </div>
-        </div>
-        
-        <div id="budgetInputs" class="budgetInputsGrid"></div>
-        
-        <div class="budgetDialogActions">
-            <button onclick="closeBudgetDialog()" class="secondaryBtn">Close</button>
-            <button onclick="openEditBudgetDialog()" class="primaryBtn">✏️ Edit Budgets</button>
-        </div>
-    </div>
-</div>
-
-<!-- EDIT BUDGET DIALOG -->
-
-<div id="editBudgetDialog" class="dialog">
-    <div class="dialogBox budgetDialogBox">
-        <div class="budgetDialogHeader">
-            <h2>✏️ Edit Budgets</h2>
-            <button class="closeBtn" onclick="closeEditBudgetDialog()" aria-label="Close">✕</button>
-        </div>
-        <p class="budgetHint">Set a monthly limit per category. Leave blank for no budget.</p>
-        
-        <div class="budgetDialogSummary">
-            <div class="budgetStatCard">
-                <span class="budgetStatLabel">Total Budget</span>
-                <span class="budgetStatValue" id="editDialogBudgetTotal">₹0</span>
-            </div>
-            <div class="budgetStatCard">
-                <span class="budgetStatLabel">Spent This Month</span>
-                <span class="budgetStatValue" id="editDialogBudgetSpent">₹0</span>
-            </div>
-            <div class="budgetStatCard">
-                <span class="budgetStatLabel">Remaining</span>
-                <span class="budgetStatValue" id="editDialogBudgetRemaining">₹0</span>
-            </div>
-        </div>
-        
-        <div id="editBudgetInputs" class="budgetInputsGrid"></div>
-        
-        <div class="budgetQuickActions">
-            <button type="button" class="quickActionBtn" onclick="quickSetBudgets('percentage')">
-                📊 Set by % of Income
-            </button>
-            <button type="button" class="quickActionBtn" onclick="quickSetBudgets('equal')">
-                ⚖️ Equal Split
-            </button>
-            <button type="button" class="quickActionBtn danger" onclick="clearAllBudgets()">
-                🗑️ Clear All
-            </button>
-        </div>
-        
-        <div class="budgetDialogActions">
-            <button onclick="closeEditBudgetDialog()" class="secondaryBtn">Cancel</button>
-            <button onclick="saveBudgets()" class="primaryBtn">Save Budgets</button>
-        </div>
-    </div>
-</div>
 
 <!-- Bottom Sheet -->
 
