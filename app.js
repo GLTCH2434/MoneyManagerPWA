@@ -279,8 +279,16 @@ function closeStatsDialog(){
 
 // Budgets Dialog
 function showBudgetsDialog(){
+    console.log("showBudgetsDialog called");
     renderBudgets();
-    document.getElementById("budgetsDialog").classList.add("show");
+    const dialog = document.getElementById("budgetsDialog");
+    console.log("budgetsDialog element:", dialog);
+    if (dialog) {
+        dialog.classList.add("show");
+        console.log("show class added");
+    } else {
+        console.error("budgetsDialog not found!");
+    }
 }
 
 function closeBudgetsDialog(){
