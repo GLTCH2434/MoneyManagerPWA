@@ -973,7 +973,7 @@ li:hover .txIcon{
     padding:32px;
     padding-bottom:max(32px,env(safe-area-inset-bottom)+24px);
     transition:transform .4s cubic-bezier(.4,0,.2,1);
-    z-index:999;
+    z-index:2001;
     box-shadow:
         var(--shadow-xl),
         0 0 0 1px rgba(255,255,255,.05),
