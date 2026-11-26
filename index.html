@@ -210,7 +210,12 @@ Save
 
 <!-- Budget Modal -->
 <div id="budgetModal">
-    <h2 id="budgetModalTitle">Add Budget</h2>
+    <div class="modalHeader">
+        <h2 id="budgetModalTitle">Add Budget</h2>
+        <button class="modalCloseBtn" onclick="closeBudgetModal()" aria-label="Close">
+            ✕
+        </button>
+    </div>
     <input
     id="budgetName"
     type="text"

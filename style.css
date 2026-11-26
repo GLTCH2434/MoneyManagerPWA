@@ -986,8 +986,15 @@ li:hover .txIcon{
     transform:translateY(0);
 }
 
-#budgetModal h2{
+#budgetModal .modalHeader{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
     margin-bottom:24px;
+}
+
+#budgetModal h2{
+    margin:0;
     text-align:center;
     font-size:22px;
     font-weight:700;
@@ -996,6 +1003,33 @@ li:hover .txIcon{
     -webkit-background-clip:text;
     -webkit-text-fill-color:transparent;
     background-clip:text;
+}
+
+#budgetModal .modalCloseBtn{
+    width:36px;
+    height:36px;
+    border-radius:12px;
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.1);
+    color:var(--text-dim);
+    font-size:18px;
+    font-weight:600;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-top:0;
+    box-shadow:none;
+    transition:var(--transition-fast);
+}
+
+#budgetModal .modalCloseBtn::before{display:none;}
+
+#budgetModal .modalCloseBtn:hover{
+    background:var(--red);
+    border-color:var(--red);
+    color:white;
+    transform:scale(1.05);
+    box-shadow:0 4px 12px var(--red-glow);
 }
 
 #budgetModal input, #budgetModal select{
