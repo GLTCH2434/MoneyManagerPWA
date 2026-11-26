@@ -17,7 +17,7 @@ const budgetCategory = document.getElementById("budgetCategory");
 const budgetNote = document.getElementById("budgetNote");
 
 let tx = JSON.parse(localStorage.getItem("tx")) || [];
-let budgets = JSON.parse(localStorage.getItem("budgets")) || [];
+let budgets = Array.isArray(JSON.parse(localStorage.getItem("budgets"))) ? JSON.parse(localStorage.getItem("budgets")) : [];
 
 function save() {
     localStorage.setItem("tx", JSON.stringify(tx));
@@ -279,16 +279,8 @@ function closeStatsDialog(){
 
 // Budgets Dialog
 function showBudgetsDialog(){
-    console.log("showBudgetsDialog called");
     renderBudgets();
-    const dialog = document.getElementById("budgetsDialog");
-    console.log("budgetsDialog element:", dialog);
-    if (dialog) {
-        dialog.classList.add("show");
-        console.log("show class added");
-    } else {
-        console.error("budgetsDialog not found!");
-    }
+    document.getElementById("budgetsDialog").classList.add("show");
 }
 
 function closeBudgetsDialog(){
